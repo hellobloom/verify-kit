@@ -1,7 +1,8 @@
+import {HashingLogic} from '@bloomprotocol/attestations-lib'
+
 import * as util from '../src/util'
 import * as validation from '../src/Validation'
 import {IVerifiedDataLegacy, IVerifiedDataBatch, DataVersions} from '../src/types'
-import {HashingLogic} from '@bloomprotocol/attestations-lib'
 
 // tslint:disable:max-line-length
 const validBatchMerkleTreeComponents: HashingLogic.IBloomBatchMerkleTreeComponents = {

@@ -1,5 +1,4 @@
 import {HashingLogic} from '@bloomprotocol/attestations-lib'
-import {orderedStringify} from '@bloomprotocol/attestations-lib/dist/HashingLogic'
 import * as R from 'ramda'
 import * as EthU from 'ethereumjs-util'
 
@@ -343,7 +342,7 @@ export const getVerifiablePresentation = (
     type: 'VerifiablePresentation',
     verifiableCredential: credential,
     proof,
-    packedData: HashingLogic.hashMessage(orderedStringify(proof)),
+    packedData: HashingLogic.hashMessage(HashingLogic.orderedStringify(proof)),
     signature,
     token,
   }
