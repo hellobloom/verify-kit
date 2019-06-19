@@ -1,5 +1,5 @@
-import { HashingLogic } from "@bloomprotocol/attestations-lib";
-import { IProof } from "merkletreejs";
+import {HashingLogic} from '@bloomprotocol/attestations-lib'
+import {IProof} from 'merkletreejs'
 
 /**
  * Based on IProof from `merkletreejs`, but the data property is a string
@@ -7,8 +7,8 @@ import { IProof } from "merkletreejs";
  * compatibility when serializing / deserializing.
  */
 interface IProofShare {
-  position: "left" | "right";
-  data: string;
+  position: 'left' | 'right'
+  data: string
 }
 
 /**
@@ -19,71 +19,71 @@ interface IVerifiedData {
   /**
    * Blockchain transaction hash which emits the layer2Hash property
    */
-  tx: string;
+  tx: string
 
   /**
    * Attestation hash that lives on chain and is formed by hashing the merkle
    * tree root hash with a nonce.
    */
-  layer2Hash: string;
+  layer2Hash: string
 
   /**
    * Merkle tree root hash
    */
-  rootHash: string;
+  rootHash: string
 
   /**
    * Nonce used to hash the `rootHash` to create the `layer2Hash`
    */
-  rootHashNonce: string;
+  rootHashNonce: string
 
   /**
    * Merkle tree leaf proof
    */
-  proof: IProofShare[];
+  proof: IProofShare[]
 
   /**
    * The Ethereum network name on which the tx can be found
    */
-  stage: "mainnet" | "rinkeby" | "local";
+  stage: 'mainnet' | 'rinkeby' | 'local'
 
   /**
    * Data node containing the raw verified data that was requested
    */
-  target: HashingLogic.IDataNode;
+  target: HashingLogic.IDataNode
 
   /**
    * Ethereum address of the attester that performed the attestation
    */
-  attester: string;
+  attester: string
 }
 
 type ResponseData = {
   /**
    * The Ethereum address of the user sharing their data
    */
-  subject: string;
+  subject: string
 
   /**
    * Data shared to the receiving endpoint requested by the share-kit QR code.
    * This data can be verified by the receiver via functions in utils.ts.
    */
-  data: IVerifiedData[];
+  data: IVerifiedData[]
 
   /**
    * Hex string representation of the `data` being keccak256 hashed
    */
-  packedData: string;
+  packedData: string
 
   /**
    * Signature of `packedData` by the user with their mnemonic.
    */
-  signature: string;
+  signature: string
 
   /**
    * Token that should match the one provided to the share-kit QR code.
    */
-  token: string;
-};
+  token: string
+}
 
-export { IProof, IProofShare, IVerifiedData, ResponseData };
+export {IProof, IProofShare, IVerifiedData, ResponseData}
