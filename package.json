@@ -1,0 +1,42 @@
+{
+  "name": "verify-kit",
+  "version": "1.0.0-alpha.0",
+  "main": "dist/index.js",
+  "module": "dist/verify-kit.esm.js",
+  "typings": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "start": "tsdx watch",
+    "build": "tsdx build",
+    "test": "tsdx test"
+  },
+  "dependencies": {
+    "@0x/typescript-typings": "^4.2.2",
+    "@bloomprotocol/attestations-lib": "^3.0.5",
+    "@types/ramda": "^0.26.9",
+    "abi-decoder": "^1.2.0",
+    "js-sha3": "^0.8.0",
+    "merkletreejs": "^0.0.11",
+    "ramda": "^0.26.1",
+    "web3": "^0.20.7"
+  },
+  "peerDependencies": {},
+  "devDependencies": {
+    "@types/jest": "^24.0.15",
+    "tsdx": "^0.7.1",
+    "tslib": "^1.10.0",
+    "typescript": "^3.5.2"
+  },
+  "jest": {
+    "moduleFileExtensions": [
+      "ts",
+      "tsx",
+      "js",
+      "jsx",
+      "json",
+      "node"
+    ]
+  }
+}
