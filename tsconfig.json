@@ -1,5 +1,4 @@
 {
-  "include": ["src", "types"],
   "compilerOptions": {
     "target": "es5",
     "module": "esnext",
@@ -23,9 +22,6 @@
     "baseUrl": "./",
     "jsx": "react",
     "esModuleInterop": true,
-    "typeRoots": [
-      "node_modules/@0x/typescript-typings/types",
-      "node_modules/@types"
-    ]
+    "typeRoots": ["node_modules/@0x/typescript-typings/types", "node_modules/@types"]
   }
 }

@@ -50,7 +50,7 @@ interface IVerifiedData {
   /**
    * Data node containing the raw verified data that was requested
    */
-  target: HashingLogic.IDataNode
+  target: HashingLogic.IDataNodeLegacy
 
   /**
    * Ethereum address of the attester that performed the attestation

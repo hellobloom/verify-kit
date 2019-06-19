@@ -1,5 +1,5 @@
 import {HashingLogic} from '@bloomprotocol/attestations-lib'
-import {IBloomMerkleTreeComponents} from '@bloomprotocol/attestations-lib/dist/src/HashingLogic'
+import {IBloomMerkleTreeComponentsLegacy} from '@bloomprotocol/attestations-lib/dist/HashingLogic'
 
 import * as util from '../src/util'
 import {IVerifiedData} from '../src/types'
@@ -8,7 +8,7 @@ import {IVerifiedData} from '../src/types'
 // https://etherscan.io/tx/0xf1d6b6b64e63737a4ef023fadc57e16793cfae5d931a3c301d14e375e54fabf6#decodetab
 test('Verifying layer2Hash, attester address, and merkle proof', () => {
   // tslint:disable:max-line-length
-  const merkleTreeComponents: IBloomMerkleTreeComponents = {
+  const merkleTreeComponents: IBloomMerkleTreeComponentsLegacy = {
     rootHash: '0xfa0147ea749ba09f692162665de44b74801cfbeb16308aaf5788e87d0e1a09a1',
     dataNodes: [
       {
@@ -61,7 +61,7 @@ test('Verifying layer2Hash, attester address, and merkle proof', () => {
   // tslint:enable:max-line-length
 
   const signedAttestationHash = HashingLogic.hashMessage(merkleTreeComponents.dataNodes[0].signedAttestation)
-  const merkleTree = HashingLogic.getMerkleTreeFromComponents(merkleTreeComponents)
+  const merkleTree = HashingLogic.getMerkleTreeFromComponentsLegacy(merkleTreeComponents)
   const proof = util.formatProofForShare(merkleTree.getProof(util.toBuffer(signedAttestationHash)))
   const emailShareData: IVerifiedData = {
     tx: '0xf1d6b6b64e63737a4ef023fadc57e16793cfae5d931a3c301d14e375e54fabf6',
