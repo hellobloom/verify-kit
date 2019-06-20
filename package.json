@@ -1,6 +1,6 @@
 {
   "name": "@bloomprotocol/verify-kit",
-  "version": "1.0.0-alpha.2",
+  "version": "1.0.0",
   "main": "dist/index.js",
   "module": "dist/verify-kit.esm.js",
   "typings": "dist/index.d.ts",
@@ -23,7 +23,7 @@
   },
   "dependencies": {
     "@0x/typescript-typings": "^4.2.2",
-    "@bloomprotocol/attestations-lib": "5.0.0-alpha.0",
+    "@bloomprotocol/attestations-lib": "5.0.0",
     "@types/ramda": "^0.26.9",
     "abi-decoder": "^1.2.0",
     "js-sha3": "^0.8.0",
@@ -31,18 +31,17 @@
     "ramda": "^0.26.1",
     "web3": "^0.20.7"
   },
-  "peerDependencies": {},
   "devDependencies": {
     "@types/jest": "^24.0.15",
     "@typescript-eslint/eslint-plugin": "^1.7.0",
     "@typescript-eslint/parser": "^1.7.0",
     "acorn": "^6.1.1",
     "eslint": "^5.16.0",
-    "eslint-config-prettier": "^4.2.0",
+    "eslint-config-prettier": "^5.0.0",
     "eslint-plugin-prettier": "^3.0.1",
-    "prettier": "^1.17.0",
+    "prettier": "^1.18.0",
     "rimraf": "^2.6.3",
-    "tsdx": "^0.7.1",
+    "tsdx": "^0.7.2",
     "tslib": "^1.10.0",
     "typescript": "^3.5.2"
   },
