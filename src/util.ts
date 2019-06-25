@@ -1,4 +1,4 @@
-import {HashingLogic} from '@bloomprotocol/attestations-lib'
+import {HashingLogic, TAttestationTypeNames} from '@bloomprotocol/attestations-lib'
 import * as R from 'ramda'
 import * as EthU from 'ethereumjs-util'
 
@@ -198,6 +198,11 @@ export const validateUntypedResponseData = async (
     data: typedResponseData,
     logs: logs,
   }
+}
+
+export const getVerifiedDataByType = (data: IVerifiablePresentation, type: TAttestationTypeNames) => {
+  const verifiableCredential = data.verifiableCredential.find(vc => vc.type === type)
+  return verifiableCredential ? verifiableCredential.credentialSubject.data : null
 }
 
 export const getOnChainCredentialProof = (

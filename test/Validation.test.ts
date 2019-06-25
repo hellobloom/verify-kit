@@ -12,6 +12,7 @@ import {
   getPresentationProof,
   getVerifiablePresentation,
   hashCredentials,
+  getVerifiedDataByType,
 } from '../src/util'
 
 const aliceWallet = ethereumjsWallet.fromPrivateKey(new Buffer('c87509a1c067bbde78beb793e6fa76530b6382a4c0241e5e4a9ec0a0f44dc0d3', 'hex'))
@@ -265,4 +266,10 @@ test('hashCredentials returns same hash no matter order of array', () => {
   const hashC = hashCredentials([batchCredential, onChainCredential, batchCredential])
   const hashD = hashCredentials([onChainCredential, batchCredential, batchCredential])
   expect(hashC).toBe(hashD)
+})
+
+test('getVerifiedDataByType helper returns correct data if found', () => {
+  expect(getVerifiedDataByType(presentation, 'email')).toBe(emailAttestation.data.data)
+  expect(getVerifiedDataByType(presentation, 'phone')).toBe(phoneAttestation.data.data)
+  expect(getVerifiedDataByType(presentation, 'google')).toBe(null)
 })
