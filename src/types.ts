@@ -11,10 +11,13 @@ interface IMerkleProofShare {
   data: string
 }
 
+type IStages = 'mainnet' | 'rinkeby' | 'ropsten' | 'local'
+
 enum DataVersions {
   legacy = 'legacy',
   onChain = 'onChain',
   batch = 'batch',
+  batchProof = 'batchProof',
 }
 
 /**
@@ -53,7 +56,7 @@ interface IVerifiedDataLegacy {
   /**
    * The Ethereum network name on which the tx can be found
    */
-  stage: 'mainnet' | 'rinkeby' | 'local'
+  stage: IStages
 
   /**
    * Data node containing the raw verified data that was requested
@@ -98,7 +101,7 @@ interface IVerifiedDataOnChain {
   /**
    * The Ethereum network name on which the tx can be found
    */
-  stage: 'mainnet' | 'rinkeby' | 'local'
+  stage: IStages
 
   /**
    * Data node containing the raw verified data that was requested
@@ -157,7 +160,7 @@ interface IVerifiedDataBatch {
   /**
    * The Ethereum network name on which the tx can be found
    */
-  stage: 'mainnet' | 'rinkeby' | 'local'
+  stage: IStages
 
   /**
    * Data node containing the raw verified data that was requested
@@ -173,6 +176,31 @@ interface IVerifiedDataBatch {
    * Subject of atteststation
    */
   subject: string
+}
+
+// Simple proof of batchLayer2Hash inclusion in a block
+interface IBatchProof {
+  version: DataVersions.batchProof
+
+  /**
+   * Blockchain transaction hash which emits the batch root property
+   */
+  tx: string
+
+  /**
+   * Merkle tree leaf proof
+   */
+  proof: IMerkleProofShare[]
+
+  /**
+   * The Ethereum network name on which the tx can be found
+   */
+  stage: IStages
+
+  /**
+   * Root hash embedded in batch tree
+   */
+  target: string
 }
 
 type TVerifiedData = IVerifiedDataLegacy | IVerifiedDataOnChain | IVerifiedDataBatch
@@ -264,6 +292,7 @@ export {
   IVerifiedDataLegacy,
   IVerifiedDataOnChain,
   IVerifiedDataBatch,
+  IBatchProof,
   TVerifiedData,
   ICredentialProof,
   IPresentationProof,
