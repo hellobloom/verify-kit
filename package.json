@@ -1,6 +1,6 @@
 {
   "name": "@bloomprotocol/verify-kit",
-  "version": "1.0.2-beta.2",
+  "version": "1.0.2-beta.3",
   "main": "dist/index.js",
   "module": "dist/verify-kit.esm.js",
   "typings": "dist/index.d.ts",
@@ -27,6 +27,7 @@
     "@types/ramda": "^0.26.9",
     "abi-decoder": "^1.2.0",
     "js-sha3": "^0.8.0",
+    "log-symbols": "^3.0.0",
     "merkletreejs": "^0.0.11",
     "ramda": "^0.26.1",
     "web3": "^0.20.7"
@@ -39,7 +40,6 @@
     "eslint": "^5.16.0",
     "eslint-config-prettier": "^5.0.0",
     "eslint-plugin-prettier": "^3.0.1",
-    "log-symbols": "^3.0.0",
     "prettier": "^1.18.0",
     "rimraf": "^2.6.3",
     "tsdx": "^0.7.2",
