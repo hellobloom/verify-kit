@@ -254,6 +254,10 @@ test('Validation.validatePresentationSignature', () => {
   ).toBeFalsy()
 })
 
+test('Validation.validateVerifiablePresentation', () => {
+  expect(Validation.validateVerifiablePresentation(presentation, {verbose: false}).kind).toEqual('validated')
+})
+
 test('Validation.isValidVerifiablePresentation', () => {
   expect(Validation.isValidVerifiablePresentation(presentation)).toBeTruthy()
   expect(Validation.isValidVerifiablePresentation(onChainCredential)).toBeFalsy()

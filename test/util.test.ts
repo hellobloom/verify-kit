@@ -160,7 +160,7 @@ test('Verifying layer2Hash, attester address, and merkle proof', () => {
     stage: 'mainnet',
     target: validBatchMerkleTreeComponents.claimNodes[0],
     attester: validBatchMerkleTreeComponents.attester,
-    subject: validBatchMerkleTreeComponents.attester,
+    subject: validBatchMerkleTreeComponents.subject,
   }
 
   expect(validation.validateVerifiedDataBatch(twitterShareData).kind).toBe('validated')

@@ -169,6 +169,5 @@ const presentationSig = HashingLogic.signHash(
 const presentation = getVerifiablePresentation(presentationToken, [batchCredential], presentationProof, presentationSig)
 
 test('Validation.isValidVerifiablePresentation', () => {
-  console.log(JSON.stringify(presentation))
   expect(Validation.isValidVerifiablePresentation(presentation)).toBeTruthy()
 })
