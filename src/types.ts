@@ -220,7 +220,7 @@ interface ICredentialProof {
 interface IVerifiableCredential {
   // TODO link to docs describing type strings
   id: string
-  type: TAttestationTypeNames
+  type: TAttestationTypeNames | string
 
   // TODO link to Bloom hosted json doc describing the attester key used to sign creds
   // for now just attester address

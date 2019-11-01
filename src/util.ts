@@ -200,7 +200,7 @@ export const validateUntypedResponseData = async (
   }
 }
 
-export const getVerifiedDataByType = (data: IVerifiablePresentation, type: TAttestationTypeNames) => {
+export const getVerifiedDataByType = (data: IVerifiablePresentation, type: TAttestationTypeNames | string) => {
   const verifiableCredential = data.verifiableCredential.find(vc => vc.type === type)
   return verifiableCredential ? verifiableCredential.credentialSubject.data : null
 }
