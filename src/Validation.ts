@@ -174,7 +174,7 @@ export const isArrayOfNonEmptyStrings = (value: any): boolean => {
 
 export const validateVerifiableCredential = genValidateFn([
   ['id', HashingValidation.isNotEmptyString, false, 'Credential ID is present'],
-  ['type', HashingValidation.isValidTypeString, false, 'Credential type is valid option'],
+  ['type', HashingValidation.isNotEmptyString, false, 'Credential type is valid string'],
   ['issuer', EthU.isValidAddress, false, 'Issuer is valid address format'],
   ['issuanceDate', HashingValidation.isValidRFC3339DateTime, false, 'Issuance date is valid RFC3339 format'],
   ['credentialSubject', isValidCredentialSubject, false, 'Credential subject passed validation'],
