@@ -1,6 +1,6 @@
 {
   "name": "@bloomprotocol/verify-kit",
-  "version": "1.0.2-beta.4",
+  "version": "1.0.2-beta.5",
   "main": "dist/index.js",
   "module": "dist/verify-kit.esm.js",
   "typings": "dist/index.d.ts",
@@ -23,7 +23,7 @@
   },
   "dependencies": {
     "@0x/typescript-typings": "^4.2.2",
-    "@bloomprotocol/attestations-lib": "^5.2.1-beta.4",
+    "@bloomprotocol/attestations-lib": "^5.3.0-beta.1",
     "@types/ramda": "^0.26.9",
     "abi-decoder": "^1.2.0",
     "js-sha3": "^0.8.0",
