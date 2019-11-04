@@ -291,10 +291,7 @@ interface IAuthProof {
   type: string
   // recent timestamp in RFC3339 format
   created: string
-  /**
-   * The Ethereum address of the user sharing their data
-   * TODO DID
-   */
+  // The Ethereum address of the user sharing their data
   creator: string
   // token challenge from recipient
   nonce: string
@@ -307,22 +304,8 @@ interface IVerifiableAuth {
   context: []
   type: 'VerifiableAuth'
   proof: IAuthProof
-
-  /**
-   * Hex string representation of the `proof` being keccak256 hashed
-   */
-  packedData: string
-
-  /**
-   * Signature of `packedData` by the user with their pk.
-   */
+  // Signature of keccak256'ed JSON
   signature: string
-
-  /**
-   * Token that should match the one provided to the share-kit QR code.
-   * same as nonce in proof
-   */
-  token: string
 }
 
 export {
