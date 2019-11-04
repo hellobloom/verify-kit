@@ -286,6 +286,45 @@ interface IVerifiablePresentation {
   token: string
 }
 
+interface IAuthProof {
+  // type string describing share kit style proof
+  type: string
+  // recent timestamp in RFC3339 format
+  created: string
+  /**
+   * The Ethereum address of the user sharing their data
+   * TODO DID
+   */
+  creator: string
+  // token challenge from recipient
+  nonce: string
+  // host of recipient endpoint
+  domain: string
+}
+
+interface IVerifiableAuth {
+  // TODO context document
+  context: []
+  type: 'VerifiableAuth'
+  proof: IAuthProof
+
+  /**
+   * Hex string representation of the `proof` being keccak256 hashed
+   */
+  packedData: string
+
+  /**
+   * Signature of `packedData` by the user with their pk.
+   */
+  signature: string
+
+  /**
+   * Token that should match the one provided to the share-kit QR code.
+   * same as nonce in proof
+   */
+  token: string
+}
+
 export {
   IProof as IMerkleProofNode,
   IMerkleProofShare,
@@ -298,5 +337,7 @@ export {
   IPresentationProof,
   IVerifiableCredential,
   IVerifiablePresentation,
+  IAuthProof,
+  IVerifiableAuth,
   DataVersions,
 }
