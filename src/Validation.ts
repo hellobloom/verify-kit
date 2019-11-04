@@ -223,7 +223,7 @@ export const validateAuthProof = genValidateFn([
 export const isValidAuthProof = (value: any): boolean => validateAuthProof(value).kind === 'validated'
 
 export const validateAuthSignature = (signature: string, params: TUnvalidated<IVerifiableAuth>) => {
-  const recoveredSigner = HashingLogic.recoverHashSigner(EthU.toBuffer(keccak256(JSON.stringify(params.proof))), signature)
+  const recoveredSigner = HashingLogic.recoverHashSigner(EthU.toBuffer(keccak256(HashingLogic.orderedStringify(params.proof))), signature)
   let creator = R.path(['proof', 'creator'], params)
   if (typeof creator !== 'string') {
     return false
