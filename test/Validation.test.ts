@@ -11,6 +11,8 @@ import {
   getBatchCredential,
   getPresentationProof,
   getVerifiablePresentation,
+  getVerifiableAuth,
+  getAuthProof,
   hashCredentials,
 } from '../src/util'
 
@@ -121,6 +123,12 @@ const presentationSig = HashingLogic.signHash(
   bobPrivkey,
 )
 const presentation = getVerifiablePresentation(presentationToken, [batchCredential, onChainCredential], presentationProof, presentationSig)
+
+const authToken = HashingLogic.generateNonce()
+const authDomain = 'https://bloom.co/receiveData'
+const authProof = getAuthProof(bobAddress, authToken, authDomain)
+const authSig = HashingLogic.signHash(EthU.toBuffer(HashingLogic.hashMessage(HashingLogic.orderedStringify(authProof))), bobPrivkey)
+const auth = getVerifiableAuth(authProof, authSig)
 
 test('Validation.isValidPositionString', () => {
   expect(Validation.isValidPositionString('left')).toBeTruthy()
