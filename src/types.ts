@@ -286,6 +286,28 @@ interface IVerifiablePresentation {
   token: string
 }
 
+interface IAuthProof {
+  // type string describing share kit style proof
+  type: string
+  // recent timestamp in RFC3339 format
+  created: string
+  // The Ethereum address of the user sharing their data
+  creator: string
+  // token challenge from recipient
+  nonce: string
+  // host of recipient endpoint
+  domain: string
+}
+
+interface IVerifiableAuth {
+  // TODO context document
+  context: []
+  type: 'VerifiableAuth'
+  proof: IAuthProof
+  // Signature of keccak256'ed JSON
+  signature: string
+}
+
 export {
   IProof as IMerkleProofNode,
   IMerkleProofShare,
@@ -298,5 +320,7 @@ export {
   IPresentationProof,
   IVerifiableCredential,
   IVerifiablePresentation,
+  IAuthProof,
+  IVerifiableAuth,
   DataVersions,
 }

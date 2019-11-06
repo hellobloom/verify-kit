@@ -4,6 +4,7 @@ import {Validation as HashingValidation, HashingLogic} from '@bloomprotocol/atte
 import {
   DataVersions,
   IVerifiableCredential,
+  IVerifiableAuth,
   ICredentialProof,
   IPresentationProof,
   IVerifiablePresentation,
@@ -11,6 +12,8 @@ import {
   IMerkleProofNode,
   TVerifiedData,
 } from './types'
+import * as R from 'ramda'
+import {keccak256} from 'js-sha3'
 import {hashCredentials} from './util'
 
 export const isValidPositionString = (value: any): boolean => {
@@ -210,3 +213,33 @@ export const validateVerifiablePresentation = genValidateFn([
 ])
 
 export const isValidVerifiablePresentation = (value: any): boolean => validateVerifiablePresentation(value).kind === 'validated'
+
+export const validateAuthProof = genValidateFn([
+  ['type', HashingValidation.isNotEmptyString, false],
+  ['created', HashingValidation.isValidRFC3339DateTime, false],
+  ['creator', EthU.isValidAddress, false],
+  ['nonce', HashingValidation.isNotEmptyString, false],
+  ['domain', HashingValidation.isNotEmptyString, false],
+])
+
+export const validateAuthSignature = (signature: string, params: TUnvalidated<IVerifiableAuth>) => {
+  const recoveredSigner = HashingLogic.recoverHashSigner(
+    EthU.toBuffer('0x' + keccak256(HashingLogic.orderedStringify(params.proof))),
+    signature,
+  )
+  let creator = R.path(['proof', 'creator'], params)
+  if (typeof creator !== 'string') {
+    return false
+  }
+  return recoveredSigner.toLowerCase() === creator.toLowerCase()
+}
+
+export const validateVerifiableAuth = genValidateFn([
+  ['context', isArrayOfNonEmptyStrings, false],
+  ['type', (value: any) => value === 'VerifiableAuth', false],
+  ['proof', (value: any): boolean => validateAuthProof(value).kind === 'validated', false],
+  ['signature', HashingValidation.isValidSignatureString, false],
+  ['signature', validateAuthSignature, true],
+])
+
+export const isValidVerifiableAuth = (value: any): boolean => validateVerifiableAuth(value).kind === 'validated'

@@ -10,6 +10,8 @@ import {
   IVerifiableCredential,
   IPresentationProof,
   IVerifiablePresentation,
+  IAuthProof,
+  IVerifiableAuth,
   IMerkleProofNode,
   IMerkleProofShare,
   ICredentialProof,
@@ -316,17 +318,17 @@ export const hashCredentials = (credential: IVerifiableCredential[]): string => 
 }
 
 export const getPresentationProof = (
-  holder: string,
-  token: string,
+  creator: string,
+  nonce: string,
   domain: string,
   credential: IVerifiableCredential[],
 ): IPresentationProof => {
   return {
     type: 'Bloom-Presentation-1.0.0',
     created: new Date().toISOString(),
-    creator: holder,
-    nonce: token,
-    domain: domain,
+    creator,
+    nonce,
+    domain,
     credentialHash: hashCredentials(credential),
   }
 }
@@ -345,5 +347,24 @@ export const getVerifiablePresentation = (
     packedData: HashingLogic.hashMessage(HashingLogic.orderedStringify(proof)),
     signature,
     token,
+  }
+}
+
+export const getAuthProof = (creator: string, nonce: string, domain: string): IAuthProof => {
+  return {
+    type: 'Bloom-Auth-1.0.0',
+    created: new Date().toISOString(),
+    creator,
+    nonce,
+    domain,
+  }
+}
+
+export const getVerifiableAuth = (proof: IAuthProof, signature: string): IVerifiableAuth => {
+  return {
+    context: [],
+    type: 'VerifiableAuth',
+    proof,
+    signature,
   }
 }

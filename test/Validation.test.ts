@@ -11,6 +11,8 @@ import {
   getBatchCredential,
   getPresentationProof,
   getVerifiablePresentation,
+  getVerifiableAuth,
+  getAuthProof,
   hashCredentials,
 } from '../src/util'
 
@@ -121,6 +123,12 @@ const presentationSig = HashingLogic.signHash(
   bobPrivkey,
 )
 const presentation = getVerifiablePresentation(presentationToken, [batchCredential, onChainCredential], presentationProof, presentationSig)
+
+const authToken = HashingLogic.generateNonce()
+const authDomain = 'https://bloom.co/receiveData'
+const authProof = getAuthProof(bobAddress, authToken, authDomain)
+const authSig = HashingLogic.signHash(EthU.toBuffer(HashingLogic.hashMessage(HashingLogic.orderedStringify(authProof))), bobPrivkey)
+const auth = getVerifiableAuth(authProof, authSig)
 
 test('Validation.isValidPositionString', () => {
   expect(Validation.isValidPositionString('left')).toBeTruthy()
@@ -265,4 +273,21 @@ test('hashCredentials returns same hash no matter order of array', () => {
   const hashC = hashCredentials([batchCredential, onChainCredential, batchCredential])
   const hashD = hashCredentials([onChainCredential, batchCredential, batchCredential])
   expect(hashC).toBe(hashD)
+})
+
+test('Validation.validateAuthProof', () => {
+  expect(Validation.validateAuthProof(auth.proof)).toBeTruthy()
+  expect(Validation.validateAuthProof(presentation).kind === 'invalid_param').toBeTruthy()
+  expect(Validation.validateAuthProof(auth).kind === 'invalid_param').toBeTruthy()
+})
+
+test('Validation.validateAuthSignature', () => {
+  expect(Validation.validateAuthSignature(authSig, auth)).toBeTruthy()
+  expect(Validation.validateAuthSignature(presentationSig, auth)).toBeFalsy()
+})
+
+test('Validation.validateVerifiableAuth', () => {
+  expect(Validation.validateVerifiableAuth(auth)).toBeTruthy()
+  expect(Validation.validateVerifiableAuth(auth.proof)).toBeTruthy()
+  expect(Validation.validateVerifiableAuth(presentation).kind === 'invalid_param').toBeTruthy()
 })
