@@ -212,6 +212,8 @@ export const validateVerifiablePresentation = genValidateFn([
   ['token', tokenMatchesProof, true],
 ])
 
+export const isValidVerifiablePresentation = (value: any): boolean => validateVerifiablePresentation(value).kind === 'validated'
+
 export const validateAuthProof = genValidateFn([
   ['type', HashingValidation.isNotEmptyString, false],
   ['created', HashingValidation.isValidRFC3339DateTime, false],
@@ -221,7 +223,10 @@ export const validateAuthProof = genValidateFn([
 ])
 
 export const validateAuthSignature = (signature: string, params: TUnvalidated<IVerifiableAuth>) => {
-  const recoveredSigner = HashingLogic.recoverHashSigner(EthU.toBuffer(keccak256(HashingLogic.orderedStringify(params.proof))), signature)
+  const recoveredSigner = HashingLogic.recoverHashSigner(
+    EthU.toBuffer('0x' + keccak256(HashingLogic.orderedStringify(params.proof))),
+    signature,
+  )
   let creator = R.path(['proof', 'creator'], params)
   if (typeof creator !== 'string') {
     return false
@@ -237,4 +242,4 @@ export const validateVerifiableAuth = genValidateFn([
   ['signature', validateAuthSignature, true],
 ])
 
-export const isValidVerifiablePresentation = (value: any): boolean => validateVerifiablePresentation(value).kind === 'validated'
+export const isValidVerifiableAuth = (value: any): boolean => validateVerifiableAuth(value).kind === 'validated'

@@ -274,3 +274,20 @@ test('hashCredentials returns same hash no matter order of array', () => {
   const hashD = hashCredentials([onChainCredential, batchCredential, batchCredential])
   expect(hashC).toBe(hashD)
 })
+
+test('Validation.validateAuthProof', () => {
+  expect(Validation.validateAuthProof(auth.proof)).toBeTruthy()
+  expect(Validation.validateAuthProof(presentation).kind === 'invalid_param').toBeTruthy()
+  expect(Validation.validateAuthProof(auth).kind === 'invalid_param').toBeTruthy()
+})
+
+test('Validation.validateAuthSignature', () => {
+  expect(Validation.validateAuthSignature(authSig, auth)).toBeTruthy()
+  expect(Validation.validateAuthSignature(presentationSig, auth)).toBeFalsy()
+})
+
+test('Validation.validateVerifiableAuth', () => {
+  expect(Validation.validateVerifiableAuth(auth)).toBeTruthy()
+  expect(Validation.validateVerifiableAuth(auth.proof)).toBeTruthy()
+  expect(Validation.validateVerifiableAuth(presentation).kind === 'invalid_param').toBeTruthy()
+})
