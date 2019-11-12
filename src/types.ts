@@ -301,7 +301,7 @@ interface IAuthProof {
 
 interface IVerifiableAuth {
   // TODO context document
-  context: []
+  context: string[]
   type: 'VerifiableAuth'
   proof: IAuthProof
   // Signature of keccak256'ed JSON
