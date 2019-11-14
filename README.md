@@ -38,9 +38,9 @@ When the user allows access you get a response back.
 
 ### ResponseData
 
-The payload is formatted as specified by Bloom's interpretation of the [W3C Verifiable Presentation Data Model](https://w3c.github.io/vc-data-model/#presentations-0).
+The payload is formatted as specified by Bloom's interpretation of the [W3C Verifiable Presentation Data Model](https://w3c.github.io/vc-data-model/#presentations-0).  The payload differs depending on whether or not the verification is for purposes of sharing Verifiable Credential(s), or Verifiable Authentication.  
 
-Format of the HTTP POST request
+Format of the HTTP POST request (Verifiable Credential):
 
 | Name                 | Description                                                                    | Type                       |
 | -------------------- | ------------------------------------------------------------------------------ | -------------------------- |
@@ -51,6 +51,15 @@ Format of the HTTP POST request
 | packedData           | Hex string representation of the hashed proof                                  | \`string\`                 |
 | signature            | Signature of \`packedData\` by the user with their mnemonic.                   | \`string\`                 |
 | token                | Unique string to identify this data request                                    | \`string\`                 |
+
+Format of the HTTP POST request (Verifiable Authentication):
+
+| Name                 | Description                                                                    | Type                       |
+| -------------------- | ------------------------------------------------------------------------------ | -------------------------- |
+| context              | URLs linking to machine readable documents describing how to interpet the data | \`string[]\`               |
+| type                 | Standard type string specifying the document ('VerifiableAuth')                | \`string\`                 |
+| proof                | Presentation proof showing the sender's authority over the shared data         | \`AuthenticationProof\`    |
+| signature            | Signature of \`packedData\` by the user with their mnemonic.                   | \`string\`                 |
 
 ### Verifiable Credential
 
@@ -228,6 +237,18 @@ Format of a users verified data
 | nonce          | Token used to make this request unique                          | \`string\` |
 | domain         | Website of recipient where user intends to share the data       | \`string\` |
 | credentialHash | Hash of array of layer2Hashes being shared                      | \`string\` |
+
+### Authentication Proof
+
+Format of a users verified data
+
+| Name           | Description                                                     | Type       |
+| -------------- | --------------------------------------------------------------- | ---------- |
+| type           | Identifier of this type of presentation proof                   | \`string\` |
+| created        | RFC3339 datetime of when this proof was generated and signed    | \`string\` |
+| creator        | Identifier of holder sharing the credential. Eth address or DID | \`string\` |
+| nonce          | Token used to make this request unique                          | \`string\` |
+| domain         | Website of recipient where user intends to share the data       | \`string\` |
 
 `
 
