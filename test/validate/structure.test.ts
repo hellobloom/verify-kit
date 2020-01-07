@@ -1,24 +1,23 @@
-import {HashingLogic} from '@bloomprotocol/attestations-lib'
+import {HashingLogic, Types} from '@bloomprotocol/attestations-lib'
 import * as EthU from 'ethereumjs-util'
+import EthWallet from 'ethereumjs-wallet'
+import * as ethSigUtil from 'eth-sig-util'
 
-const ethereumjsWallet = require('ethereumjs-wallet')
-const ethSigUtil = require('eth-sig-util')
-
-import * as Validation from '../src/Validation'
+import * as Validation from '../../src/validate/structure'
+import * as ValidationUtils from '../../src/validate/structure/utils'
+import {formatMerkleProofForShare, hashCredentials} from '../../src/utils'
 import {
-  formatMerkleProofForShare,
-  getOnChainCredential,
-  getBatchCredential,
-  getPresentationProof,
-  getVerifiablePresentation,
-  getVerifiableAuth,
-  getAuthProof,
-  hashCredentials,
-} from '../src/util'
+  buildOnChainCredential,
+  buildBatchCredential,
+  buildPresentationProof,
+  buildVerifiablePresentation,
+  buildVerifiableAuth,
+  buildAuthProof,
+} from '../../src/build'
 
-const aliceWallet = ethereumjsWallet.fromPrivateKey(new Buffer('c87509a1c067bbde78beb793e6fa76530b6382a4c0241e5e4a9ec0a0f44dc0d3', 'hex'))
+const aliceWallet = EthWallet.fromPrivateKey(new Buffer('c87509a1c067bbde78beb793e6fa76530b6382a4c0241e5e4a9ec0a0f44dc0d3', 'hex'))
 const alicePrivkey = aliceWallet.getPrivateKey()
-const bobWallet = ethereumjsWallet.fromPrivateKey(new Buffer('ae6ae8e5ccbfb04590405997ee2d52d2b330726137b875053c36d94e974d162f', 'hex'))
+const bobWallet = EthWallet.fromPrivateKey(new Buffer('ae6ae8e5ccbfb04590405997ee2d52d2b330726137b875053c36d94e974d162f', 'hex'))
 
 const bobPrivkey = bobWallet.getPrivateKey()
 const bobAddress = bobWallet.getAddressString()
@@ -89,7 +88,7 @@ const components = HashingLogic.getSignedMerkleTreeComponents(
   alicePrivkey,
 )
 
-const onChainCredential = getOnChainCredential(
+const onChainCredential = buildOnChainCredential(
   bobAddress,
   [],
   '0xf1d6b6b64e63737a4ef023fadc57e16793cfae5d931a3c301d14e375e54fabf6',
@@ -113,22 +112,27 @@ const batchComponents = HashingLogic.getSignedBatchMerkleTreeComponents(
   alicePrivkey,
 )
 
-const batchCredential = getBatchCredential([], 'mainnet', batchComponents, batchComponents.claimNodes[1])
+const batchCredential = buildBatchCredential([], 'mainnet', batchComponents, batchComponents.claimNodes[1])
 
 const presentationToken = HashingLogic.generateNonce()
 const presentationDomain = 'https://bloom.co/receiveData'
-const presentationProof = getPresentationProof(bobAddress, presentationToken, presentationDomain, [batchCredential, onChainCredential])
+const presentationProof = buildPresentationProof(bobAddress, presentationToken, presentationDomain, [batchCredential, onChainCredential])
 const presentationSig = HashingLogic.signHash(
   EthU.toBuffer(HashingLogic.hashMessage(HashingLogic.orderedStringify(presentationProof))),
   bobPrivkey,
 )
-const presentation = getVerifiablePresentation(presentationToken, [batchCredential, onChainCredential], presentationProof, presentationSig)
+const presentation = buildVerifiablePresentation(
+  presentationToken,
+  [batchCredential, onChainCredential],
+  presentationProof,
+  presentationSig,
+)
 
 const authToken = HashingLogic.generateNonce()
 const authDomain = 'https://bloom.co/receiveData'
-const authProof = getAuthProof(bobAddress, authToken, authDomain)
+const authProof = buildAuthProof(bobAddress, authToken, authDomain)
 const authSig = HashingLogic.signHash(EthU.toBuffer(HashingLogic.hashMessage(HashingLogic.orderedStringify(authProof))), bobPrivkey)
-const auth = getVerifiableAuth(authProof, authSig)
+const auth = buildVerifiableAuth(authProof, authSig)
 
 test('Validation.isValidPositionString', () => {
   expect(Validation.isValidPositionString('left')).toBeTruthy()
@@ -148,7 +152,7 @@ test('Validation.isValidStageString', () => {
 test('Validation.isValidMerkleProofArray', () => {
   const testLeaves = HashingLogic.getPadding(1)
   const validMerkleTree = HashingLogic.getMerkleTreeFromLeaves(testLeaves)
-  const validMerkleProof = validMerkleTree.getProof(EthU.toBuffer(testLeaves[1]))
+  const validMerkleProof = validMerkleTree.getProof(EthU.toBuffer(testLeaves[1])) as Types.IProof[]
   const shareableMerkleProof = formatMerkleProofForShare(validMerkleProof)
   expect(Validation.isValidMerkleProofArray(validMerkleProof)).toBeFalsy()
   expect(Validation.isValidMerkleProofArray(shareableMerkleProof)).toBeTruthy()
@@ -177,7 +181,7 @@ test('Validation.isOptionalArrayOfAuthorizations', () => {
 test('Validation.formatMerkleProofForVerify', () => {
   const testLeaves = HashingLogic.getPadding(1)
   const validMerkleTree = HashingLogic.getMerkleTreeFromLeaves(testLeaves)
-  const validMerkleProof = validMerkleTree.getProof(EthU.toBuffer(testLeaves[1]))
+  const validMerkleProof = validMerkleTree.getProof(EthU.toBuffer(testLeaves[1])) as Types.IProof[]
   const shareableMerkleProof = formatMerkleProofForShare(validMerkleProof)
   const verifiableMerkleProof = Validation.formatMerkleProofForVerify(shareableMerkleProof)
   expect(verifiableMerkleProof).toEqual(validMerkleProof)
@@ -209,9 +213,9 @@ test('Validation.proofMatchesSubject', () => {
 })
 
 test('Validation.isArrayOfNonEmptyStrings', () => {
-  expect(Validation.isArrayOfNonEmptyStrings([])).toBeFalsy()
-  expect(Validation.isArrayOfNonEmptyStrings([''])).toBeFalsy()
-  expect(Validation.isArrayOfNonEmptyStrings(['a'])).toBeTruthy()
+  expect(ValidationUtils.isArrayOfNonEmptyStrings([])).toBeFalsy()
+  expect(ValidationUtils.isArrayOfNonEmptyStrings([''])).toBeFalsy()
+  expect(ValidationUtils.isArrayOfNonEmptyStrings(['a'])).toBeTruthy()
 })
 
 test('Validation.isArrayOfVerifiableCredentials', () => {
@@ -228,13 +232,13 @@ test('Validation.proofMatchesCredential', () => {
   expect(Validation.proofMatchesCredential(presentationProof, presentation)).toBeTruthy()
   expect(
     Validation.proofMatchesCredential(
-      getPresentationProof(bobAddress, presentationToken, presentationDomain, [onChainCredential, batchCredential]),
+      buildPresentationProof(bobAddress, presentationToken, presentationDomain, [onChainCredential, batchCredential]),
       presentation,
     ),
   ).toBeTruthy()
   expect(
     Validation.proofMatchesCredential(
-      getPresentationProof(bobAddress, presentationToken, presentationDomain, [batchCredential]),
+      buildPresentationProof(bobAddress, presentationToken, presentationDomain, [batchCredential]),
       presentation,
     ),
   ).toBeFalsy()
@@ -259,11 +263,6 @@ test('Validation.validatePresentationSignature', () => {
       presentation,
     ),
   ).toBeFalsy()
-})
-
-test('Validation.isValidVerifiablePresentation', () => {
-  expect(Validation.isValidVerifiablePresentation(presentation)).toBeTruthy()
-  expect(Validation.isValidVerifiablePresentation(onChainCredential)).toBeFalsy()
 })
 
 test('hashCredentials returns same hash no matter order of array', () => {

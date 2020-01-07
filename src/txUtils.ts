@@ -11,6 +11,7 @@ export type IDecodedLogEvent = {
   type: string
   value: string
 }
+
 export type TDecodedLog = {
   address: string
   name: string
@@ -18,8 +19,7 @@ export type TDecodedLog = {
 }
 
 export const getDecodedTxEventLogs = async (provider: string, txHash: string): Promise<TDecodedLog[]> => {
-  const httpProvider = new Web3.providers.HttpProvider(provider)
-  const web3 = new Web3(httpProvider)
+  const web3 = new Web3(new Web3.providers.HttpProvider(provider))
   const txReceipt = await web3.eth.getTransactionReceipt(txHash)
   if (!txReceipt) {
     throw Error(`Unable to retrieve transaction receipt for hash: '${txHash}'`)
