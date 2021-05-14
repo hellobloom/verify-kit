@@ -1,4 +1,6 @@
-**Important**: This repository is no longer maintained. It has been moved to the [attestations-es](https://github.com/hellobloom/attestations-es/) monorepo.
+:warning: **_Notice_** :warning:
+
+This library is no longer maintained, please use [ssi-sdk](https://github.com/hellobloom/ssi-sdk) instead.
 
 # Verify Kit
 
