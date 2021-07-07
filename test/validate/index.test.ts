@@ -1,8 +1,9 @@
-import {HashingLogic} from '@bloomprotocol/attestations-lib'
+import {HashingLogic, Types} from '@bloomprotocol/attestations-lib'
+import * as EthU from 'ethereumjs-util'
 
-import * as util from '../src/util'
-import * as validation from '../src/Validation'
-import {IVerifiedDataLegacy, IVerifiedDataBatch, DataVersions} from '../src/types'
+import {validateVerifiablePresentationResponse} from '../../src'
+import {formatMerkleProofForShare} from '../../src/utils'
+import {validateVerifiedDataLegacy, validateVerifiedDataBatch} from '../../src/validate/structure'
 
 // tslint:disable:max-line-length
 const validBatchMerkleTreeComponents: HashingLogic.IBloomBatchMerkleTreeComponents = {
@@ -127,9 +128,9 @@ test('Verifying layer2Hash, attester address, and merkle proof', () => {
   // tslint:disable:max-line-length
   const signedAttestationHash = HashingLogic.hashMessage(validMerkleTreeComponentsLegacy.dataNodes[0].signedAttestation)
   const merkleTree = HashingLogic.getMerkleTreeFromComponentsLegacy(validMerkleTreeComponentsLegacy)
-  const proof = util.formatMerkleProofForShare(merkleTree.getProof(util.toBuffer(signedAttestationHash)))
-  const emailShareData: IVerifiedDataLegacy = {
-    version: DataVersions.legacy,
+  const proof = formatMerkleProofForShare(merkleTree.getProof(EthU.toBuffer(signedAttestationHash)) as Types.IProof[])
+  const emailShareData: Types.IVerifiedDataLegacy = {
+    version: Types.DataVersions.legacy,
     tx: '0xf1d6b6b64e63737a4ef023fadc57e16793cfae5d931a3c301d14e375e54fabf6',
     layer2Hash: validMerkleTreeComponentsLegacy.layer2Hash,
     rootHash: validMerkleTreeComponentsLegacy.rootHash,
@@ -140,15 +141,15 @@ test('Verifying layer2Hash, attester address, and merkle proof', () => {
     attester: '0x40b469b080c4b034091448d0e59880d823b2fc18',
   }
 
-  expect(validation.validateVerifiedDataLegacy(emailShareData).kind).toBe('validated')
+  expect(validateVerifiedDataLegacy(emailShareData).kind).toBe('validated')
 })
 
 test('Verifying layer2Hash, attester address, and merkle proof', () => {
   const signedAttestationHash = HashingLogic.hashMessage(validBatchMerkleTreeComponents.claimNodes[0].attesterSig)
   const merkleTree = HashingLogic.getMerkleTreeFromComponents(validBatchMerkleTreeComponents)
-  const proof = util.formatMerkleProofForShare(merkleTree.getProof(util.toBuffer(signedAttestationHash)))
-  const twitterShareData: IVerifiedDataBatch = {
-    version: DataVersions.batch,
+  const proof = formatMerkleProofForShare(merkleTree.getProof(EthU.toBuffer(signedAttestationHash)) as Types.IProof[])
+  const twitterShareData: Types.IVerifiedDataBatch = {
+    version: Types.DataVersions.batch,
     batchLayer2Hash: validBatchMerkleTreeComponents.batchLayer2Hash,
     batchAttesterSig: validBatchMerkleTreeComponents.batchAttesterSig,
     subjectSig: validBatchMerkleTreeComponents.subjectSig,
@@ -163,18 +164,16 @@ test('Verifying layer2Hash, attester address, and merkle proof', () => {
     subject: validBatchMerkleTreeComponents.attester,
   }
 
-  expect(validation.validateVerifiedDataBatch(twitterShareData).kind).toBe('validated')
+  expect(validateVerifiedDataBatch(twitterShareData).kind).toBe('validated')
 })
 
 test('Verify ResponseData that is structured incorrectly does not validate.', async () => {
-  const options: util.IValidateResponseDataOptions = {validateOnChain: false}
-
-  const undefinedResponseData = await util.validateUntypedResponseData(undefined, options)
+  const undefinedResponseData = await validateVerifiablePresentationResponse(undefined)
   expect(undefinedResponseData.kind).toBe('invalid')
 
-  const nullResponseData = await util.validateUntypedResponseData(null, options)
+  const nullResponseData = await validateVerifiablePresentationResponse(null)
   expect(nullResponseData.kind).toBe('invalid')
 
-  const emptyObject = await util.validateUntypedResponseData({}, options)
+  const emptyObject = await validateVerifiablePresentationResponse({})
   expect(emptyObject.kind).toBe('invalid')
 })

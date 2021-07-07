@@ -352,14 +352,14 @@ Format of a users verified data
 
 ## Receive
 
-The endpoint specified in the QR code should be configured to accept data in the format shown in [ResponseData](#responsedata).
+The endpoint specified in the QR code should be configured to accept data in the format shown in [ResponseData](#responsedata). In addition to using this library to validate the received data you should enusre that the `token` passed back is valid, it should be treated as a one-time use token to avoid replay attacks.
 
 ```typescript
-import {validateUntypedResponseData} from '@bloomprotocol/verify-kit'
+import {validateVerifiablePresentationResponse} from '@bloomprotocol/verify-kit'
 
 app.post('/scan', async (req, res) => {
   try {
-    const verifiedData = await validateUntypedResponseData(req.body, {
+    const verifiedData = await validateVerifiablePresentationResponse(req.body, {
       validateOnChain: env.validateOnChain,
       web3Provider: env.web3Provider,
     })
@@ -374,6 +374,33 @@ app.post('/scan', async (req, res) => {
     const consumableData = verifiedData.data.verifiableCredential.map(v => v.credentialSubject.data)
 
     res.status(200).json({success: true, message: 'Data Received'})
+  } catch (err) {
+    res.status(400).json({
+      success: false,
+      message: 'Something went wrong',
+    })
+  }
+})
+```
+
+Or if you are expecting an auth reponse:
+
+```typescript
+import {validateVerifiableAuthResponse} from '@bloomprotocol/verify-kit'
+
+app.post('/scan', async (req, res) => {
+  try {
+    const verifiedAuth = validateVerifiableAuthResponse(req.body)
+    if (verifiedAuth.kind === 'invalid') {
+      res.status(400).json({
+        success: false,
+        message: 'Auth is not valid',
+        verifiedAuth,
+      })
+      return
+    }
+
+    res.status(200).json({success: true, message: 'Auth Received'})
   } catch (err) {
     res.status(400).json({
       success: false,
